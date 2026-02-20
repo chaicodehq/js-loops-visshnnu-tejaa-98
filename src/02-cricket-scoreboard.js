@@ -32,4 +32,26 @@
  */
 export function cricketScoreboard(balls) {
   // Your code here
+  let result = {
+    totalRuns: 0,
+    totalBalls: 0,
+    wickets: 0,
+    fours: 0,
+    sixes: 0
+  }
+  if(!Array.isArray(balls) || balls.length === 0) return result
+
+  balls.forEach(ball =>{
+    if(result.wickets === 10) return
+    result.totalBalls++
+    if(ball === -1){
+      result.wickets++
+    }else{
+      result.totalRuns += ball
+      if(ball === 4) result.fours++
+      if(ball === 6) result.sixes++
+    }
+  })
+
+  return result
 }

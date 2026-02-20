@@ -46,4 +46,87 @@
  */
 export function railwayReservation(passengers, trains) {
   // Your code here
+
+  let confirmed = "confirmed";
+  let waitlisted = "waitlisted";
+  let res = [];
+
+  if (!passengers || !trains) return [];
+  if (!Array.isArray(passengers) || !Array.isArray(trains)) return [];
+  if (trains.length === 0) return [];
+
+  for (let i = 0; i < passengers.length; i++) {
+    let passenger = passengers[i];
+    console.log(passenger.trainNumber);
+    let train = trains.filter(
+      (train) => train.trainNumber === passenger.trainNumber,
+    )[0];
+
+    if (!train) {
+      res.push({
+        name: passenger.name,
+        trainNumber: passenger.trainNumber,
+        class: null,
+        status: "train_not_found",
+      });
+      continue;
+    }
+
+    let preferedClass = passenger.preferred;
+    let isPreferedClassAvailable = train.seats[preferedClass] > 0;
+
+    if (isPreferedClassAvailable) {
+      train.seats[preferedClass] -= 1;
+      res.push({
+        name: passenger.name,
+        trainNumber: passenger.trainNumber,
+        class: passenger.preferred,
+        status: confirmed,
+      });
+      continue;
+    }
+
+    let passengerFallbackClass = passenger.fallback;
+    let isPassengerFallBackClassAvailable =
+      train.seats[passengerFallbackClass] > 0;
+
+    if (isPassengerFallBackClassAvailable) {
+      train.seats[passengerFallbackClass] -= 1;
+      res.push({
+        name: passenger.name,
+        trainNumber: passenger.trainNumber,
+        class: passenger.fallback,
+        status: confirmed,
+      });
+      continue;
+    }
+
+    res.push({
+      name: passenger.name,
+      trainNumber: passenger.trainNumber,
+      class: passenger.preferred,
+      status: waitlisted,
+    });
+  }
+  return res;
 }
+
+console.log(
+  railwayReservation(
+    [
+      {
+        name: "Rahul",
+        trainNumber: "12345",
+        preferred: "ac3",
+        fallback: "sleeper",
+      },
+    ],
+    [
+      {
+        trainNumber: "12345",
+        name: "Rajdhani",
+        seats: { sleeper: 5, ac3: 1, ac2: 1, ac1: 0 },
+      },
+    ],
+  ),
+);
